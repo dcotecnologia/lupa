@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Added
 
+- `install.sh` installs or updates from the latest GitHub release with one command (`curl -fsSL .../install.sh | sh`), checking its sha256, and `uninstall.sh` removes it by @danilogco
 - Screenshots of the launcher in the README, rendered by `make screenshot` by @danilogco
 - Project standards: `AGENTS.md`, `COMMITING.md`, `CONTRIBUTING.md`, `SECURITY.md`, a code of conduct, issue and pull request templates, a CodeQL scan and a `Makefile` by @danilogco
 

@@ -39,11 +39,23 @@ There is no config file; edit the constants at the top of `src/spotlight.py` and
 
 ## The install script
 
-`install.sh` checks for PyGObject, copies the script to `~/.local/bin/spotlight`, and on
-Cinnamon registers a custom keybinding named `spotlight` via `gsettings`
-(`org.cinnamon.desktop.keybindings`). It also removes `<Super>space` from
-`wm switch-input-source`, because Cinnamon binds it to layout switching by default.
+`install.sh` is POSIX `sh`, so it works piped from the web (`curl ... | sh`) and from a checkout.
+
+- **Where the files come from.** Next to `src/spotlight.py` (a checkout) it installs that file.
+  Anywhere else it reads `releases/latest` (or `releases/tags/vX.Y.Z` with `--version`) from the
+  GitHub API, downloads `spotlight-linux-X.Y.Z.tar.gz`, and checks its sha256 against the digest
+  GitHub publishes for the asset, or against the `SHA256SUMS` file of the release. No checksum
+  means no install. Plain `http` is accepted only for localhost, for the tests.
+- **Install and update are the same command.** It copies the script to `~/.local/bin/spotlight`
+  (or `--prefix`) and says whether it installed, updated, or found the same file already there.
+- **Shortcut.** On Cinnamon it registers a custom keybinding named `spotlight` through `gsettings`
+  (`org.cinnamon.desktop.keybindings`) and removes `<Super>space` from `wm switch-input-source`,
+  because Cinnamon binds it to layout switching by default. `--no-shortcut` skips this.
+- **Dependencies.** It checks that `/usr/bin/python3` can import GTK 3 and warns when `plocate` is missing.
+
 `uninstall.sh` reverses all of it and resets that key to its default.
+
+`tests/test_install_script.py` runs the script against a fake GitHub API on localhost.
 
 ## Troubleshooting
 

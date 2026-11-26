@@ -33,15 +33,40 @@ sudo apt install python3-gi gir1.2-gtk-3.0 plocate
 
 ## Install
 
+The easiest way is the install script. It finds the latest release, checks it against
+the sha256 that GitHub publishes for it, and installs it into `~/.local/bin`. Run the
+same command again to update; it says when you already have the latest version.
+
 ```bash
-git clone git@github.com:dcotecnologia/spotlight-linux.git
+curl -fsSL https://raw.githubusercontent.com/dcotecnologia/spotlight-linux/main/install.sh | sh
+```
+
+On Cinnamon it also binds **Super+Space** (and frees it from keyboard-layout switching).
+On other desktops, bind a key to `/usr/bin/python3 ~/.local/bin/spotlight` yourself.
+
+To choose a version or look before it acts, save the script and run it with
+`--dry-run`, `--version 0.1.0`, `--prefix DIR` or `--no-shortcut`; `./install.sh --help`
+lists them. A script that you pipe into a shell runs with your rights, so read it
+first if you prefer: [install.sh](install.sh). The sha256 check catches a damaged or
+swapped download; it trusts GitHub and this repository, as any download from them does.
+
+### Install from a checkout
+
+```bash
+git clone https://github.com/dcotecnologia/spotlight-linux.git
 cd spotlight-linux
 ./install.sh
 ```
 
-On Cinnamon this also binds **Super+Space** (and frees it from keyboard-layout switching).
-On other desktops, bind a key to `/usr/bin/python3 ~/.local/bin/spotlight` yourself.
-Options: `--no-shortcut`, `--prefix DIR`. To remove everything: `./uninstall.sh`.
+Run from a checkout, the script installs that checkout instead of a release.
+
+### Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/dcotecnologia/spotlight-linux/main/uninstall.sh | sh
+```
+
+It removes the command and the shortcut, and gives Super+Space back to the layout switcher.
 
 ## Usage
 

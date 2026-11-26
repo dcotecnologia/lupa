@@ -3,7 +3,7 @@
 Guide for agents (human and AI) working in this repository.
 Goal: keep the code, tests and commit history consistent.
 
-spotlight-linux is a Spotlight-style launcher for Linux desktops, built with
+Lupa is a keyboard launcher for Linux desktops, built with
 Python 3.12+ and GTK3 (PyGObject). It searches applications, files (through
 `plocate`) and math expressions, and it never changes anything on the system besides
 launching the thing the person picked.
@@ -23,7 +23,7 @@ two documents disagree, stop and ask instead of picking one.
 
 ## 1) Architecture and responsibilities
 
-`src/spotlight.py` is one module with a clear split:
+`src/lupa.py` is one module with a clear split:
 
 - Pure logic, no GTK widgets and no display: `calc` (the whitelist evaluator),
   `search_apps`, `search_files`, `open_uri` and `Result`. Everything here is unit tested.
@@ -31,7 +31,7 @@ two documents disagree, stop and ask instead of picking one.
   needs a display, so it is the only part excluded from coverage.
 - `install.sh` / `uninstall.sh`: install the command and register the shortcut. They
   must stay idempotent and must not touch what they did not create.
-- `tests/` mirrors the module: `tests/test_spotlight.py`.
+- `tests/` mirrors the module: `tests/test_lupa.py`.
 - `tools/screenshot.py` renders the screenshots of the README; run it with `make screenshot`.
 
 Golden rule:

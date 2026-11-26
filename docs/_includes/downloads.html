@@ -16,7 +16,7 @@
 					setTimeout(function () { button.textContent = "Copy"; }, 1800);
 				});
 			});
-			fetch("https://api.github.com/repos/dcotecnologia/spotlight-linux/releases/latest")
+			fetch("https://api.github.com/repos/dcotecnologia/lupa/releases/latest")
 				.then(function (response) { return response.ok ? response.json() : Promise.reject(); })
 				.then(function (release) {
 					document.getElementById("download-version").innerHTML =

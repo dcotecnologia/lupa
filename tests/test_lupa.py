@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
-import spotlight
+import lupa
 
 pytestmark = pytest.mark.unit
 
@@ -32,7 +32,7 @@ pytestmark = pytest.mark.unit
     ],
 )
 def test_calc_evaluates(text, expected):
-    assert spotlight.calc(text) == expected
+    assert lupa.calc(text) == expected
 
 
 @pytest.mark.parametrize(
@@ -53,7 +53,7 @@ def test_calc_evaluates(text, expected):
     ],
 )
 def test_calc_rejects(text):
-    assert spotlight.calc(text) is None
+    assert lupa.calc(text) is None
 
 
 # -- search_apps ------------------------------------------------------------
@@ -89,7 +89,7 @@ class FakeApp:
 
 def fake_gio(monkeypatch, apps):
     monkeypatch.setattr(
-        spotlight, "Gio", SimpleNamespace(AppInfo=SimpleNamespace(get_all=lambda: apps))
+        lupa, "Gio", SimpleNamespace(AppInfo=SimpleNamespace(get_all=lambda: apps))
     )
 
 
@@ -102,7 +102,7 @@ def test_search_apps_ranks_prefix_before_substring_before_keywords(monkeypatch):
     ]
     fake_gio(monkeypatch, apps)
 
-    results = spotlight.search_apps("Fire")
+    results = lupa.search_apps("Fire")
 
     assert [r.title for r in results] == ["Firefox", "My Firefox", "Browser"]
     assert results[0].subtitle == "Web browser"
@@ -112,23 +112,23 @@ def test_search_apps_ranks_prefix_before_substring_before_keywords(monkeypatch):
 def test_search_apps_matches_generic_name(monkeypatch):
     fake_gio(monkeypatch, [FakeApp("Files", generic="File Manager")])
 
-    assert [r.title for r in spotlight.search_apps("manager")] == ["Files"]
+    assert [r.title for r in lupa.search_apps("manager")] == ["Files"]
 
 
 def test_search_apps_skips_hidden_and_non_matching(monkeypatch):
     fake_gio(monkeypatch, [FakeApp("Hidden", show=False), FakeApp("Other")])
 
-    assert spotlight.search_apps("hidden") == []
+    assert lupa.search_apps("hidden") == []
 
 
 def test_search_apps_limits_rows_and_launches(monkeypatch):
-    apps = [FakeApp(f"App {i:02d}") for i in range(spotlight.MAX_ROWS + 5)]
+    apps = [FakeApp(f"App {i:02d}") for i in range(lupa.MAX_ROWS + 5)]
     fake_gio(monkeypatch, apps)
 
-    results = spotlight.search_apps("app")
+    results = lupa.search_apps("app")
     results[0].action()
 
-    assert len(results) == spotlight.MAX_ROWS
+    assert len(results) == lupa.MAX_ROWS
     assert apps[0].launched
 
 
@@ -146,27 +146,27 @@ def fake_plocate(monkeypatch, lines):
         assert cmd[0] == "plocate"
         return SimpleNamespace(stdout="\n".join(lines))
 
-    monkeypatch.setattr(spotlight.subprocess, "run", run)
+    monkeypatch.setattr(lupa.subprocess, "run", run)
 
 
 def test_search_files_needs_three_characters(home):
-    assert spotlight.search_files("ab") == []
+    assert lupa.search_files("ab") == []
 
 
 def test_search_files_without_plocate(home, monkeypatch):
-    monkeypatch.setattr(spotlight.os.path, "exists", lambda _p: False)
+    monkeypatch.setattr(lupa.os.path, "exists", lambda _p: False)
 
-    assert spotlight.search_files("invoice") == []
+    assert lupa.search_files("invoice") == []
 
 
 def test_search_files_survives_plocate_failure(home, monkeypatch):
     def boom(*_a, **_k):
         raise subprocess.TimeoutExpired("plocate", 1.5)
 
-    monkeypatch.setattr(spotlight.os.path, "exists", lambda _p: True)
-    monkeypatch.setattr(spotlight.subprocess, "run", boom)
+    monkeypatch.setattr(lupa.os.path, "exists", lambda _p: True)
+    monkeypatch.setattr(lupa.subprocess, "run", boom)
 
-    assert spotlight.search_files("invoice") == []
+    assert lupa.search_files("invoice") == []
 
 
 def test_search_files_keeps_visible_paths_under_home(home, monkeypatch):
@@ -174,7 +174,7 @@ def test_search_files_keeps_visible_paths_under_home(home, monkeypatch):
     (home / "docs" / "invoice.pdf").write_text("x")
     (home / ".cache").mkdir()
     (home / ".cache" / "invoice.tmp").write_text("x")
-    monkeypatch.setattr(spotlight.os.path, "exists", lambda _p: True)
+    monkeypatch.setattr(lupa.os.path, "exists", lambda _p: True)
     fake_plocate(
         monkeypatch,
         [
@@ -184,7 +184,7 @@ def test_search_files_keeps_visible_paths_under_home(home, monkeypatch):
         ],
     )
 
-    results = spotlight.search_files("invoice")
+    results = lupa.search_files("invoice")
 
     assert [r.title for r in results] == ["invoice.pdf"]
     assert results[0].subtitle == "~/docs/invoice.pdf"
@@ -197,11 +197,11 @@ def test_search_files_shows_five_and_opens_uri(home, monkeypatch):
         (folder / f"report{i}.txt").write_text("x")
     paths = [str(p) for p in sorted(folder.iterdir())]
     opened = []
-    monkeypatch.setattr(spotlight.os.path, "exists", lambda _p: True)
+    monkeypatch.setattr(lupa.os.path, "exists", lambda _p: True)
     fake_plocate(monkeypatch, [str(folder), *paths])
-    monkeypatch.setattr(spotlight, "open_uri", opened.append)
+    monkeypatch.setattr(lupa, "open_uri", opened.append)
 
-    results = spotlight.search_files("report")
+    results = lupa.search_files("report")
     results[0].action()  # the directory itself
     results[1].action()
 
@@ -212,7 +212,7 @@ def test_search_files_shows_five_and_opens_uri(home, monkeypatch):
 def test_open_uri_uses_the_default_application(monkeypatch):
     launched = []
     monkeypatch.setattr(
-        spotlight,
+        lupa,
         "Gio",
         SimpleNamespace(
             AppInfo=SimpleNamespace(
@@ -221,13 +221,13 @@ def test_open_uri_uses_the_default_application(monkeypatch):
         ),
     )
 
-    spotlight.open_uri("https://example.com")
+    lupa.open_uri("https://example.com")
 
     assert launched == [("https://example.com", None)]
 
 
 def test_result_keeps_its_fields():
-    result = spotlight.Result("t", "s", None, lambda: 1)
+    result = lupa.Result("t", "s", None, lambda: 1)
 
     assert (result.title, result.subtitle, result.icon) == ("t", "s", None)
     assert result.action() == 1

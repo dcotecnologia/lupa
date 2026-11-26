@@ -1,28 +1,28 @@
-title: Spotlight for Linux
-tagline: A Spotlight-style launcher for Linux
-description: A free Spotlight-style launcher for Linux. Press Super+Space to open apps, find files and do quick math from one search box. One-command install.
+title: Lupa
+tagline: A keyboard launcher for Linux
+description: A free keyboard launcher for Linux. Press Super+Space to open apps, find files and do quick math from one search box. One-command install.
 
 # The address of the site: the canonical URLs, the sitemap and the social cards use it
 url: https://dcotecnologia.github.io
-baseurl: /spotlight-linux
+baseurl: /lupa
 lang: en
 locale: en_US
 
-app_name: Spotlight for Linux
+app_name: Lupa
 app_icon: assets/icon.png
 app_screenshot: screenshots/apps.png
 app_screenshot_alt: The launcher searching for an application
 social_image: assets/og.png
-social_image_alt: Spotlight for Linux, a search box that opens apps, finds files and does math
-app_description: A Spotlight-style launcher for Linux. Press Super+Space, type, and open an app, find a file or get the result of a calculation, without leaving the keyboard. Free, open source and installed with one command.
+social_image_alt: Lupa, a search box that opens apps, finds files and does math
+app_description: A keyboard launcher for Linux. Press Super+Space, type, and open an app, find a file or get the result of a calculation, without leaving the keyboard. Free, open source and installed with one command.
 
 # Google Tag Manager container (GTM-XXXXXXX); empty leaves the tag out of the pages
 google_tag_manager_id: ""
 # Google Analytics 4 measurement ID (G-XXXXXXXXXX); empty leaves the tag out of the pages
 google_analytics_id: ""
 
-repo_url: https://github.com/dcotecnologia/spotlight-linux
-install_command: curl -fsSL https://raw.githubusercontent.com/dcotecnologia/spotlight-linux/main/install.sh | sh
+repo_url: https://github.com/dcotecnologia/lupa
+install_command: curl -fsSL https://raw.githubusercontent.com/dcotecnologia/lupa/main/install.sh | sh
 company_name: DCO Tecnologia
 company_url: https://dcotecnologia.com
 x_handle: dcotecnologia
@@ -48,7 +48,7 @@ nav:
   - title: Docs
     url: /documentation/
   - title: Source
-    url: https://github.com/dcotecnologia/spotlight-linux
+    url: https://github.com/dcotecnologia/lupa
 
 features:
   - icon: "⌕"

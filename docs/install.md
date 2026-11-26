@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Install
-description: Install or update Spotlight for Linux with one command. It verifies the download with sha256 and binds Super+Space on Cinnamon.
+description: Install or update Lupa with one command. It verifies the download with sha256 and binds Super+Space on Cinnamon.
 permalink: /install/
 ---
 
@@ -11,13 +11,13 @@ One command installs the latest release and, run again, updates it. It checks th
 download against the sha256 that GitHub publishes before installing anything.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/dcotecnologia/spotlight-linux/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/dcotecnologia/lupa/main/install.sh | sh
 ```
 
-It puts the launcher in `~/.local/bin/spotlight`. On Cinnamon it also binds **Super+Space**
+It puts the launcher in `~/.local/bin/lupa`. On Cinnamon it also binds **Super+Space**
 and frees that key from keyboard-layout switching; on other desktops, bind a key to
-`/usr/bin/python3 ~/.local/bin/spotlight` yourself. You can read
-[install.sh](https://github.com/dcotecnologia/spotlight-linux/blob/main/install.sh) first, and
+`/usr/bin/python3 ~/.local/bin/lupa` yourself. You can read
+[install.sh](https://github.com/dcotecnologia/lupa/blob/main/install.sh) first, and
 choose a version or look before it acts with `--version 0.1.0` and `--dry-run`.
 
 ## Requirements
@@ -29,7 +29,7 @@ choose a version or look before it acts with `--version 0.1.0` and `--dry-run`.
 ## Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/dcotecnologia/spotlight-linux/main/uninstall.sh | sh
+curl -fsSL https://raw.githubusercontent.com/dcotecnologia/lupa/main/uninstall.sh | sh
 ```
 
 ## Learn more

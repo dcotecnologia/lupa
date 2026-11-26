@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Documentation
-description: How Spotlight for Linux works, how to configure it, what the install script does, and how to fix common problems on Cinnamon and GNOME.
+description: How Lupa works, how to configure it, what the install script does, and how to fix common problems on Cinnamon and GNOME.
 permalink: /documentation/
 ---
 

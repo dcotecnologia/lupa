@@ -23,7 +23,7 @@ def make_tarball(version, body):
     buffer = io.BytesIO()
     data = body.encode()
     with tarfile.open(fileobj=buffer, mode="w:gz") as tar:
-        info = tarfile.TarInfo(f"spotlight-linux-{version}/src/spotlight.py")
+        info = tarfile.TarInfo(f"lupa-{version}/src/lupa.py")
         info.size = len(data)
         tar.addfile(info, io.BytesIO(data))
     return buffer.getvalue()
@@ -63,7 +63,7 @@ class FakeGitHub:
         return self.tarballs[version]
 
     def route(self, path):
-        base = "/repos/example/spotlight/releases/"
+        base = "/repos/example/lupa/releases/"
         if path.startswith(base):
             tag = path.removeprefix(base)
             version = (
@@ -75,18 +75,18 @@ class FakeGitHub:
         name = path.removeprefix("/files/")
         for version in self.releases:
             tarball = self.tarball(version)
-            if name == f"spotlight-linux-{version}.tar.gz":
+            if name == f"lupa-{version}.tar.gz":
                 return 200, tarball
             if name == f"SHA256SUMS-{version}":
                 digest = hashlib.sha256(tarball).hexdigest()
-                line = f"{digest}  spotlight-linux-{version}.tar.gz\n"
+                line = f"{digest}  lupa-{version}.tar.gz\n"
                 return 200, line.encode()
         return 404, b"{}"
 
     def release(self, version):
         data = self.releases[version]
         tarball = self.tarball(version)
-        name = f"spotlight-linux-{version}.tar.gz"
+        name = f"lupa-{version}.tar.gz"
         asset = {"name": name, "browser_download_url": f"{self.url}/files/{name}"}
         if data.get("digest", True):
             asset["digest"] = "sha256:" + hashlib.sha256(tarball).hexdigest()
@@ -125,8 +125,8 @@ def run_install(tmp_path, api, *args, script=INSTALL):
     env = {
         **os.environ,
         "HOME": str(tmp_path),
-        "SPOTLIGHT_REPO": "example/spotlight",
-        "SPOTLIGHT_API": api,
+        "LUPA_REPO": "example/lupa",
+        "LUPA_API": api,
     }
     result = subprocess.run(
         ["sh", str(script), "--no-shortcut", "--prefix", str(prefix), *args],
@@ -135,7 +135,7 @@ def run_install(tmp_path, api, *args, script=INSTALL):
         env=env,
         check=False,
     )
-    return result, prefix / "spotlight"
+    return result, prefix / "lupa"
 
 
 @pytest.fixture
@@ -253,7 +253,7 @@ def test_installs_from_a_checkout(tmp_path):
 
     assert result.returncode == 0, result.stderr
     assert "from the checkout" in result.stdout
-    assert target.read_bytes() == (ROOT / "src" / "spotlight.py").read_bytes()
+    assert target.read_bytes() == (ROOT / "src" / "lupa.py").read_bytes()
 
 
 def test_rejects_an_unknown_option(tmp_path):
@@ -261,3 +261,27 @@ def test_rejects_an_unknown_option(tmp_path):
 
     assert result.returncode != 0
     assert "unknown option" in result.stderr
+
+
+def test_removes_the_command_of_the_old_name(tmp_path):
+    old = tmp_path / "bin" / "spotlight"
+    old.parent.mkdir()
+    old.write_text("application_id='dev.local.SpotlightLauncher'")
+
+    result, target = run_install(tmp_path, "http://127.0.0.1:1")
+
+    assert result.returncode == 0, result.stderr
+    assert "Removed the old command" in result.stdout
+    assert not old.exists()
+    assert target.exists()
+
+
+def test_keeps_a_spotlight_command_that_is_not_ours(tmp_path):
+    other = tmp_path / "bin" / "spotlight"
+    other.parent.mkdir()
+    other.write_text("#!/bin/sh\necho somebody else's tool\n")
+
+    result, _ = run_install(tmp_path, "http://127.0.0.1:1")
+
+    assert result.returncode == 0, result.stderr
+    assert other.read_text().startswith("#!/bin/sh")

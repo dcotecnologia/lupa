@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Tutorial
-description: "A five-minute tour of Spotlight for Linux: open it with Super+Space, launch apps, do quick math, find files and search the web."
+description: "A five-minute tour of Lupa: open it with Super+Space, launch apps, do quick math, find files and search the web."
 permalink: /tutorial/
 ---
 

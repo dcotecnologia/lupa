@@ -1,7 +1,7 @@
 [project]
-name = "spotlight-linux"
+name = "lupa"
 version = "0.1.0"
-description = "Spotlight-style launcher for Linux (Python + GTK3)"
+description = "A keyboard launcher for Linux (Python + GTK3)"
 readme = "README.md"
 license = "MIT"
 authors = [

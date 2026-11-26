@@ -76,9 +76,7 @@ def social_card():
     """The 1200x630 card shown when the site is shared."""
     card = gradient((1200, 630), DARK, (30, 41, 80)).convert("RGBA")
     draw = ImageDraw.Draw(card)
-    draw.text(
-        (70, 60), "Spotlight for Linux", font=ImageFont.truetype(BOLD, 74), fill="white"
-    )
+    draw.text((70, 60), "Lupa", font=ImageFont.truetype(BOLD, 74), fill="white")
     draw.text(
         (72, 160),
         "Open apps, find files and do math from one search box.",

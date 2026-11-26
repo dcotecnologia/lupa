@@ -69,9 +69,9 @@ jobs:
           VERSION: ${{ steps.release_vars.outputs.project_version }}
         run: |
           mkdir dist
-          git archive --format=tar.gz --prefix="spotlight-linux-${VERSION}/" \
-            -o "dist/spotlight-linux-${VERSION}.tar.gz" HEAD
-          (cd dist && sha256sum "spotlight-linux-${VERSION}.tar.gz" > SHA256SUMS)
+          git archive --format=tar.gz --prefix="lupa-${VERSION}/" \
+            -o "dist/lupa-${VERSION}.tar.gz" HEAD
+          (cd dist && sha256sum "lupa-${VERSION}.tar.gz" > SHA256SUMS)
 
       - uses: softprops/action-gh-release@v3
         with:

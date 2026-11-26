@@ -1,6 +1,6 @@
-# Contributing to spotlight-linux
+# Contributing to lupa
 
-Thanks for helping. spotlight-linux is a Spotlight-style launcher for Linux written in
+Thanks for helping. Lupa is a keyboard launcher for Linux written in
 Python with GTK3. This page gets you from a clone to a pull request; the details live in
 two other files:
 
@@ -11,8 +11,8 @@ two other files:
 ## Set up
 
 ```bash
-git clone https://github.com/dcotecnologia/spotlight-linux.git
-cd spotlight-linux
+git clone https://github.com/dcotecnologia/lupa.git
+cd lupa
 sudo apt install python3-gi gir1.2-gtk-3.0 plocate
 make setup          # venv with system packages, dev dependencies and the pre-commit hook
 ```

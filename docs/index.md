@@ -6,11 +6,11 @@ layout: default
 <div class="more">
  <h2>See it at work</h2>
  <figure>
-  <img src="{{ '/screenshots/apps.png' | relative_url }}" alt="Searching for an application with Spotlight for Linux" loading="lazy" width="640" height="173">
+  <img src="{{ '/screenshots/apps.png' | relative_url }}" alt="Searching for an application with Lupa" loading="lazy" width="640" height="173">
   <figcaption>Type a few letters of an application and press Enter.</figcaption>
  </figure>
  <figure>
-  <img src="{{ '/screenshots/calculator.png' | relative_url }}" alt="Using the built-in calculator of Spotlight for Linux" loading="lazy" width="640" height="173">
+  <img src="{{ '/screenshots/calculator.png' | relative_url }}" alt="Using the built-in calculator of Lupa" loading="lazy" width="640" height="173">
   <figcaption>Type a calculation; Enter copies the result.</figcaption>
  </figure>
 </div>
@@ -22,6 +22,6 @@ layout: default
  <p>One command, <a href="{{ '/install/' | relative_url }}">on the install page</a>. Run it again to update; it checks the sha256 of the download against the one GitHub publishes.</p>
  <h3>Does it send my searches anywhere?</h3>
  <p>No. It has no telemetry, history or network of its own. The web search row only opens your browser with the text you typed.</p>
- <h3>Is it a replacement for macOS Spotlight?</h3>
- <p>It covers the daily part: opening apps, finding files and doing quick math from the keyboard. It is not affiliated with Apple. <a href="{{ '/documentation/' | relative_url }}">The documentation</a> lists what it does and its limits.</p>
+ <h3>Is it like the launcher of macOS?</h3>
+ <p>It covers the daily part: opening apps, finding files and doing quick math from the keyboard. Lupa is not affiliated with Apple; Spotlight and macOS are trademarks of Apple Inc. <a href="{{ '/documentation/' | relative_url }}">The documentation</a> lists what it does and its limits.</p>
 </div>

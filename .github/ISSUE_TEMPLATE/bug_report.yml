@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in spotlight-linux does not work as expected.
+description: Something in lupa does not work as expected.
 title: "bug: "
 labels: ["bug"]
 body:
@@ -44,7 +44,7 @@ body:
     id: logs
     attributes:
       label: Output of running it in a terminal
-      description: Run `/usr/bin/python3 ~/.local/bin/spotlight` and paste what it prints. Redact anything private.
+      description: Run `/usr/bin/python3 ~/.local/bin/lupa` and paste what it prints. Redact anything private.
       render: shell
     validations:
       required: false

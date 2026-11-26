@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Spotlight-like launcher for Linux (GTK3).
+"""Lupa, a keyboard launcher for Linux (GTK3).
 
 Run again to toggle the window. Search: applications, calculator (type
 `2*(3+4)`), files via plocate (type at least 3 chars), and a web-search
@@ -181,7 +181,7 @@ def open_uri(uri):
 
 class Launcher(Gtk.Application):
     def __init__(self):
-        super().__init__(application_id="dev.local.SpotlightLauncher")
+        super().__init__(application_id="com.dcotecnologia.Lupa")
         self.win = None
 
     def do_startup(self):
@@ -216,7 +216,7 @@ class Launcher(Gtk.Application):
 
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.get_style_context().add_class("box")
-        self.entry = Gtk.Entry(placeholder_text="Spotlight Search")
+        self.entry = Gtk.Entry(placeholder_text="Search")
         self.entry.connect("changed", self.on_changed)
         self.entry.connect("key-press-event", self.on_key)
         self.entry.connect("activate", lambda *_: self.run_selected())

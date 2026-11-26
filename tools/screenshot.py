@@ -18,7 +18,7 @@ from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-import spotlight  # noqa: E402
+import lupa  # noqa: E402
 
 OUT = ROOT / "docs" / "screenshots"
 SHOTS = [("apps", "fire"), ("calculator", "2*(3+4)^2")]
@@ -43,7 +43,7 @@ def capture(win, path):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    app = spotlight.Launcher()
+    app = lupa.Launcher()
     app.register(None)
     app.do_startup()
     app.build()

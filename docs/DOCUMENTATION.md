@@ -2,8 +2,8 @@
 
 ## How it works
 
-`src/spotlight.py` is a single-file `Gtk.Application` with the application id
-`dev.local.SpotlightLauncher`. GTK registers that id on the session D-Bus, so a second
+`src/lupa.py` is a single-file `Gtk.Application` with the application id
+`com.dcotecnologia.Lupa`. GTK registers that id on the session D-Bus, so a second
 run of the command does not start a new process: it triggers `activate` in the running
 one, which toggles the window. That is why one global shortcut can both open and close it.
 
@@ -28,7 +28,7 @@ Selecting a row runs its `action` after hiding the window.
 
 ## Configuration
 
-There is no config file; edit the constants at the top of `src/spotlight.py` and rerun
+There is no config file; edit the constants at the top of `src/lupa.py` and rerun
 `./install.sh`:
 
 | Constant | Meaning |
@@ -41,14 +41,14 @@ There is no config file; edit the constants at the top of `src/spotlight.py` and
 
 `install.sh` is POSIX `sh`, so it works piped from the web (`curl ... | sh`) and from a checkout.
 
-- **Where the files come from.** Next to `src/spotlight.py` (a checkout) it installs that file.
+- **Where the files come from.** Next to `src/lupa.py` (a checkout) it installs that file.
   Anywhere else it reads `releases/latest` (or `releases/tags/vX.Y.Z` with `--version`) from the
-  GitHub API, downloads `spotlight-linux-X.Y.Z.tar.gz`, and checks its sha256 against the digest
+  GitHub API, downloads `lupa-X.Y.Z.tar.gz`, and checks its sha256 against the digest
   GitHub publishes for the asset, or against the `SHA256SUMS` file of the release. No checksum
   means no install. Plain `http` is accepted only for localhost, for the tests.
-- **Install and update are the same command.** It copies the script to `~/.local/bin/spotlight`
+- **Install and update are the same command.** It copies the script to `~/.local/bin/lupa`
   (or `--prefix`) and says whether it installed, updated, or found the same file already there.
-- **Shortcut.** On Cinnamon it registers a custom keybinding named `spotlight` through `gsettings`
+- **Shortcut.** On Cinnamon it registers a custom keybinding named `lupa` through `gsettings`
   (`org.cinnamon.desktop.keybindings`) and removes `<Super>space` from `wm switch-input-source`,
   because Cinnamon binds it to layout switching by default. `--no-shortcut` skips this.
 - **Dependencies.** It checks that `/usr/bin/python3` can import GTK 3 and warns when `plocate` is missing.
@@ -76,8 +76,8 @@ guaranteed focus. The global shortcut is only automated for Cinnamon.
 ## Development
 
 ```bash
-/usr/bin/python3 src/spotlight.py          # run from the checkout
-/usr/bin/python3 -I -c "import importlib.util as u; s=u.spec_from_file_location('sp','src/spotlight.py'); m=u.module_from_spec(s); s.loader.exec_module(m); print(m.calc('2*(3+4)'))"
+/usr/bin/python3 src/lupa.py          # run from the checkout
+/usr/bin/python3 -I -c "import importlib.util as u; s=u.spec_from_file_location('sp','src/lupa.py'); m=u.module_from_spec(s); s.loader.exec_module(m); print(m.calc('2*(3+4)'))"
 ```
 
 The second command exercises the pure logic (calculator, search) without opening a window.
@@ -94,7 +94,7 @@ make lint   # pre-commit on all files (ruff, yamllint, gitleaks, actionlint, ...
 ```
 
 The window class (`Launcher`) needs a display and is excluded from coverage; check it by
-hand by running `src/spotlight.py`. Everything it calls is unit tested.
+hand by running `src/lupa.py`. Everything it calls is unit tested.
 Install the git hook once with `uv run pre-commit install`.
 
 ## Releases

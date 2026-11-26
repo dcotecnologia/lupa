@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+### Changed
+
+- The project is now called Lupa, to avoid confusion with the trademarks of others: the repository is `dcotecnologia/lupa`, the command is `lupa`, the keybinding is named `lupa` and the release file is `lupa-X.Y.Z.tar.gz`. Running `install.sh` again removes the command and the shortcut of the old name by @danilogco
+
 ### Added
 
 - A website on GitHub Pages, with the install command, the tutorial and the documentation, and with SEO metadata: canonical URLs, Open Graph and Twitter cards, structured data, a sitemap and `robots.txt` by @danilogco
@@ -22,5 +26,5 @@ All notable changes to this project will be documented in this file. The format 
 - `install.sh` and `uninstall.sh`, which also bind and release Super+Space on Cinnamon by @danilogco
 - Unit tests at 100% coverage, a pre-commit configuration, a CI pipeline and a release pipeline by @danilogco
 
-[Unreleased]: https://github.com/dcotecnologia/spotlight-linux/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/dcotecnologia/spotlight-linux/releases/tag/v0.1.0
+[Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/dcotecnologia/lupa/releases/tag/v0.1.0

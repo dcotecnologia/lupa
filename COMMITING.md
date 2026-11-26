@@ -71,7 +71,7 @@ Use the body to explain **why** the change is needed, especially for non-obvious
 Use the footer for issue references and breaking changes:
 
 ```text
-BREAKING CHANGE: rename the launcher command from spotlight to spotlight-linux
+BREAKING CHANGE: rename the launcher command
 Refs: #12
 ```
 

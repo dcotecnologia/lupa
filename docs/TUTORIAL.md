@@ -1,6 +1,6 @@
 # Tutorial
 
-A five-minute tour. Install first (see the [Install section of the README](https://github.com/dcotecnologia/spotlight-linux#install)).
+A five-minute tour. Install first (see the [Install section of the README](https://github.com/dcotecnologia/lupa#install)).
 
 ## 1. Open it
 
@@ -8,7 +8,7 @@ Press **Super+Space** (the Windows key plus Space). A search box appears in the
 upper-middle of your screen. If nothing happens, run this in a terminal to rule out the shortcut:
 
 ```bash
-/usr/bin/python3 ~/.local/bin/spotlight
+/usr/bin/python3 ~/.local/bin/lupa
 ```
 
 ## 2. Launch an app

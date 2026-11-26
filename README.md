@@ -1,7 +1,7 @@
-# spotlight-linux
+# lupa
 
-[![CI](https://github.com/dcotecnologia/spotlight-linux/actions/workflows/ci.yml/badge.svg)](https://github.com/dcotecnologia/spotlight-linux/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/github/license/dcotecnologia/spotlight-linux)](LICENSE)
+[![CI](https://github.com/dcotecnologia/lupa/actions/workflows/ci.yml/badge.svg)](https://github.com/dcotecnologia/lupa/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/dcotecnologia/lupa)](LICENSE)
 ![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)
 ![Platform: Linux](https://img.shields.io/badge/platform-linux-lightgrey)
 ![GTK 3](https://img.shields.io/badge/GTK-3-4a86cf)
@@ -9,9 +9,10 @@
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)](https://github.com/pre-commit/pre-commit)
 
-**Website:** <https://dcotecnologia.github.io/spotlight-linux/>
+**Website:** <https://dcotecnologia.github.io/lupa/>
 
-A small macOS-Spotlight-style launcher for Linux desktops, written in Python and GTK3.
+A small keyboard launcher for Linux desktops, written in Python and GTK3, in the spirit of
+launchers such as macOS Spotlight.
 Press a shortcut, type, hit Enter.
 
 ![Searching for an application](docs/screenshots/apps.png)
@@ -40,11 +41,11 @@ the sha256 that GitHub publishes for it, and installs it into `~/.local/bin`. Ru
 same command again to update; it says when you already have the latest version.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/dcotecnologia/spotlight-linux/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/dcotecnologia/lupa/main/install.sh | sh
 ```
 
 On Cinnamon it also binds **Super+Space** (and frees it from keyboard-layout switching).
-On other desktops, bind a key to `/usr/bin/python3 ~/.local/bin/spotlight` yourself.
+On other desktops, bind a key to `/usr/bin/python3 ~/.local/bin/lupa` yourself.
 
 To choose a version or look before it acts, save the script and run it with
 `--dry-run`, `--version 0.1.0`, `--prefix DIR` or `--no-shortcut`; `./install.sh --help`
@@ -55,8 +56,8 @@ swapped download; it trusts GitHub and this repository, as any download from the
 ### Install from a checkout
 
 ```bash
-git clone https://github.com/dcotecnologia/spotlight-linux.git
-cd spotlight-linux
+git clone https://github.com/dcotecnologia/lupa.git
+cd lupa
 ./install.sh
 ```
 
@@ -65,7 +66,7 @@ Run from a checkout, the script installs that checkout instead of a release.
 ### Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/dcotecnologia/spotlight-linux/main/uninstall.sh | sh
+curl -fsSL https://raw.githubusercontent.com/dcotecnologia/lupa/main/uninstall.sh | sh
 ```
 
 It removes the command and the shortcut, and gives Super+Space back to the layout switcher.
@@ -88,6 +89,11 @@ See [docs/TUTORIAL.md](docs/TUTORIAL.md) for a walkthrough and
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md) and [COMMITING.md](COMMITING.md);
 report vulnerabilities as described in [SECURITY.md](SECURITY.md).
+
+## Trademarks
+
+Lupa is an independent project and is not affiliated with or endorsed by Apple Inc.
+Spotlight and macOS are trademarks of Apple Inc.
 
 ## License
 

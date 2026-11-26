@@ -13,7 +13,7 @@ setup: ## Create the venv (it must see the system PyGObject), sync the dependenc
 	$(UV) run --extra dev pre-commit install
 
 run: ## Start the launcher from this checkout (run it again to close it)
-	/usr/bin/python3 src/spotlight.py
+	/usr/bin/python3 src/lupa.py
 
 install: ## Install the command and the Super+Space shortcut (Cinnamon)
 	./install.sh

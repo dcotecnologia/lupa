@@ -1,5 +1,14 @@
 # spotlight-linux
 
+[![CI](https://github.com/dcotecnologia/spotlight-linux/actions/workflows/ci.yml/badge.svg)](https://github.com/dcotecnologia/spotlight-linux/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/dcotecnologia/spotlight-linux)](LICENSE)
+![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)
+![Platform: Linux](https://img.shields.io/badge/platform-linux-lightgrey)
+![GTK 3](https://img.shields.io/badge/GTK-3-4a86cf)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)](https://github.com/pre-commit/pre-commit)
+
 A small macOS-Spotlight-style launcher for Linux desktops, written in Python and GTK3.
 Press a shortcut, type, hit Enter.
 

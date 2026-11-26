@@ -1,0 +1,53 @@
+[project]
+name = "spotlight-linux"
+version = "0.1.0"
+description = "Spotlight-style launcher for Linux (Python + GTK3)"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Danilo Carolino", email = "danilogcarolino@gmail.com" }]
+requires-python = ">=3.12"
+# PyGObject and GTK come from the system (python3-gi), not from PyPI
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.6",
+]
+
+[tool.uv]
+# a script installed by install.sh, not a distributable package
+package = false
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "--import-mode=importlib --cov=src --strict-markers --tb=short --cov-report=term-missing --cov-report=xml --cov-fail-under=100 --cov-config=pyproject.toml"
+markers = [
+    "unit: unit test",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+precision = 2
+# The window needs a display, so it is checked by hand (see docs/DOCUMENTATION.md);
+# everything it calls (calc, search_apps, search_files) is covered.
+exclude_also = [
+    "class Launcher\\b",
+    "if __name__ == .__main__.:",
+]

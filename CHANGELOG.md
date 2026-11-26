@@ -29,5 +29,5 @@ All notable changes to this project will be documented in this file. The format 
 - Unit tests at 100% coverage, a pre-commit configuration, a CI pipeline and a release pipeline by @danilogco
 
 [Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/dcotecnologia/lupa/releases/tag/v0.2.0
-[0.1.0]: https://github.com/dcotecnologia/lupa/commit/d92cd3e
+[0.2.0]: https://github.com/dcotecnologia/lupa/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/dcotecnologia/lupa/releases/tag/v0.1.0

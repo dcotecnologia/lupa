@@ -1,0 +1,29 @@
+<div class="downloads">
+	<p class="installLabel">Install or update with one command</p>
+	<div class="installCommand">
+		<code id="install-command">{{ site.install_command }}</code>
+		<button id="copy-install" type="button" aria-label="Copy the install command">Copy</button>
+	</div>
+	<p id="download-version" class="downloadVersion">Needs Python 3 with GTK 3 · <a href="{{ site.repo_url }}/releases/latest">all releases</a></p>
+	<script>
+		(function () {
+			var button = document.getElementById("copy-install");
+			button.addEventListener("click", function () {
+				var text = document.getElementById("install-command").textContent;
+				if (!navigator.clipboard) { return; }
+				navigator.clipboard.writeText(text).then(function () {
+					button.textContent = "Copied";
+					setTimeout(function () { button.textContent = "Copy"; }, 1800);
+				});
+			});
+			fetch("https://api.github.com/repos/dcotecnologia/spotlight-linux/releases/latest")
+				.then(function (response) { return response.ok ? response.json() : Promise.reject(); })
+				.then(function (release) {
+					document.getElementById("download-version").innerHTML =
+						"Version " + release.tag_name.replace(/^v/, "") +
+						" · <a href=\"" + release.html_url + "\">release notes</a>";
+				})
+				.catch(function () {});
+		})();
+	</script>
+</div>

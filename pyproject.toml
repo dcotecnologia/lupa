@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Spotlight-style launcher for Linux (Python + GTK3)"
 readme = "README.md"
 license = "MIT"
-authors = [{ name = "Danilo Carolino", email = "danilogcarolino@gmail.com" }]
+authors = [
+    { name = "Danilo Carolino", email = "danilogcarolino@gmail.com" },
+    { name = "DCO Developers", email = "dev@dcotecnologia.com" },
+]
 requires-python = ">=3.12"
 # PyGObject and GTK come from the system (python3-gi), not from PyPI
 dependencies = []

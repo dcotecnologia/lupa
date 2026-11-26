@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-26
+
 ### Added
 
 - A dim placeholder, "Search apps, files or math", while the search box is empty, in a tone darker than the text you type by @danilogco
+
+### Fixed
+
+- The site is served from its own domain, `lupa.dcotecnologia.com`, with the stylesheet, images, canonical URLs and sitemap at the root by @danilogco
 
 ## [0.2.0] - 2026-11-26
 
@@ -32,6 +38,7 @@ All notable changes to this project will be documented in this file. The format 
 - `install.sh` and `uninstall.sh`, which also bind and release Super+Space on Cinnamon by @danilogco
 - Unit tests at 100% coverage, a pre-commit configuration, a CI pipeline and a release pipeline by @danilogco
 
-[Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/dcotecnologia/lupa/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dcotecnologia/lupa/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dcotecnologia/lupa/releases/tag/v0.1.0

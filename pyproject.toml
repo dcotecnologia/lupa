@@ -1,6 +1,6 @@
 [project]
 name = "lupa"
-version = "0.2.0"
+version = "0.3.0"
 description = "A keyboard launcher for Linux (Python + GTK3)"
 readme = "README.md"
 license = "MIT"

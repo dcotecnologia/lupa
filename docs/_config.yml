@@ -3,8 +3,8 @@ tagline: A keyboard launcher for Linux
 description: A free keyboard launcher for Linux. Press Super+Space to open apps, find files and do quick math from one search box. One-command install.
 
 # The address of the site: the canonical URLs, the sitemap and the social cards use it
-url: https://dcotecnologia.github.io
-baseurl: /lupa
+url: https://lupa.dcotecnologia.com
+baseurl: ""
 lang: en
 locale: en_US
 

@@ -69,3 +69,30 @@ guaranteed focus. The global shortcut is only automated for Cinnamon.
 ```
 
 The second command exercises the pure logic (calculator, search) without opening a window.
+
+## Tests and linting
+
+The project uses [uv](https://docs.astral.sh/uv/). PyGObject comes from the system, so the
+virtual environment must see the system packages; `make sync` does that.
+
+```bash
+make sync   # venv with system site packages + dev dependencies
+make test   # pytest, 100% coverage required
+make lint   # pre-commit on all files (ruff, yamllint, gitleaks, actionlint, ...)
+```
+
+The window class (`Launcher`) needs a display and is excluded from coverage; check it by
+hand by running `src/spotlight.py`. Everything it calls is unit tested.
+Install the git hook once with `uv run pre-commit install`.
+
+## Releases
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/). To release:
+
+1. Move the `[Unreleased]` notes of `CHANGELOG.md` under a new `## [X.Y.Z] - date` heading
+   and bump `version` in `pyproject.toml` (then `uv lock`).
+2. Merge to `main`, then push the tag: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+
+The Release workflow runs the tests, checks that the tag matches `pyproject.toml`, validates
+the changelog, and publishes a GitHub release with the changelog section as its notes, a
+source tarball and its `SHA256SUMS`. A tag with a dash (`v0.2.0-rc1`) is a pre-release.

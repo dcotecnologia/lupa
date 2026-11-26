@@ -3,6 +3,9 @@
 A small macOS-Spotlight-style launcher for Linux desktops, written in Python and GTK3.
 Press a shortcut, type, hit Enter.
 
+![Searching for an application](docs/screenshots/apps.png)
+![Using the calculator](docs/screenshots/calculator.png)
+
 - **Apps**: prefix/substring search over installed applications, with icons.
 - **Calculator**: type `2*(3+4)^2` or `sqrt(16)`; Enter copies the result.
 - **Files**: searches your home directory through `plocate` (3+ characters).
@@ -44,6 +47,11 @@ Options: `--no-shortcut`, `--prefix DIR`. To remove everything: `./uninstall.sh`
 
 See [docs/TUTORIAL.md](docs/TUTORIAL.md) for a walkthrough and
 [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) for internals, configuration and troubleshooting.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md) and [COMMITING.md](COMMITING.md);
+report vulnerabilities as described in [SECURITY.md](SECURITY.md).
 
 ## License
 

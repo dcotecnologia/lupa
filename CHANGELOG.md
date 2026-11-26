@@ -1,0 +1,24 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+- Screenshots of the launcher in the README, rendered by `make screenshot` by @danilogco
+- Project standards: `AGENTS.md`, `COMMITING.md`, `CONTRIBUTING.md`, `SECURITY.md`, a code of conduct, issue and pull request templates, a CodeQL scan and a `Makefile` by @danilogco
+
+## [0.1.0] - 2026-11-26
+
+### Added
+
+- A Spotlight-style launcher window (GTK3) that opens with a shortcut and closes with Esc, a click outside, or the same shortcut by @danilogco
+- Search of installed applications, with icons, ranked by name prefix, name substring, then generic name and keywords by @danilogco
+- A calculator with `+ - * / % // ^`, `pi`, `e` and the usual math functions, evaluated without `eval`; Enter copies the result by @danilogco
+- File search in the home directory through `plocate`, and a web search row as the last result by @danilogco
+- `install.sh` and `uninstall.sh`, which also bind and release Super+Space on Cinnamon by @danilogco
+- Unit tests at 100% coverage, a pre-commit configuration, a CI pipeline and a release pipeline by @danilogco
+
+[Unreleased]: https://github.com/dcotecnologia/spotlight-linux/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/dcotecnologia/spotlight-linux/releases/tag/v0.1.0

@@ -1,0 +1,50 @@
+name: Bug report
+description: Something in spotlight-linux does not work as expected.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: A clear and concise description of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Press the shortcut ...
+        2. Type ...
+        3. See the error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Distribution and desktop
+      placeholder: Linux Mint 22 Cinnamon (X11), Ubuntu 24.04 GNOME (Wayland), ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output of running it in a terminal
+      description: Run `/usr/bin/python3 ~/.local/bin/spotlight` and paste what it prints. Redact anything private.
+      render: shell
+    validations:
+      required: false

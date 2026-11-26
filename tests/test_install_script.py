@@ -392,3 +392,28 @@ def test_the_deb_is_the_first_choice_where_apt_exists(tmp_path, github, lone_scr
     assert result.returncode == 0, result.stderr
     assert ("(deb)" in result.stdout) == bool(privileges)
     assert not target.exists()
+
+
+def test_piped_into_sh_it_ignores_a_checkout_in_the_current_folder(tmp_path, github):
+    server = github({"0.1.0": {"body": "from the release"}})
+    env = {
+        **os.environ,
+        "HOME": str(tmp_path),
+        "LUPA_REPO": "example/lupa",
+        "LUPA_API": server.url,
+        "XDG_DATA_HOME": str(tmp_path / "data"),
+    }
+
+    result = subprocess.run(
+        ["sh", "-s", "--", "--no-shortcut", "--prefix", str(tmp_path / "bin")],
+        input=INSTALL.read_text(),
+        cwd=ROOT,  # a checkout: it has src/lupa.py
+        capture_output=True,
+        text=True,
+        env=env,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "from the checkout" not in result.stdout
+    assert (tmp_path / "bin" / "lupa").read_text() == "from the release"

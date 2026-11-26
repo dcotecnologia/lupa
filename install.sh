@@ -90,7 +90,11 @@ need_gtk() {
 
 # 1. Where the files come from -----------------------------------------
 # a checkout when this script sits next to src/lupa.py, else the latest release
-HERE=$(CDPATH='' cd -- "$(dirname -- "$0")" 2>/dev/null && pwd) || HERE=
+# (piped into sh, $0 is just "sh": the current folder must not count as a checkout)
+HERE=
+if [ -f "$0" ]; then
+  HERE=$(CDPATH='' cd -- "$(dirname -- "$0")" 2>/dev/null && pwd) || HERE=
+fi
 SOURCE=
 CMD=
 if [ -n "$HERE" ] && [ -f "$HERE/src/lupa.py" ] && [ "$VERSION" = latest ] &&

@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-26
+
 ### Added
 
 - `lupa --version` shows the version, author, repository, website, license and the hash of the build, and does not open the window; `lupa --help` shows the usage by @danilogco
@@ -13,6 +15,10 @@ All notable changes to this project will be documented in this file. The format 
 
 - `install.sh` installs the `.deb` where `apt` and `sudo` exist, else the AppImage where FUSE 2 and PyGObject are there, else the script as before; `--method deb|appimage|script` forces one by @danilogco
 - `uninstall.sh` also removes the AppImage and tells how to remove the `.deb` by @danilogco
+
+### Fixed
+
+- `install.sh` piped into `sh` no longer installs a checkout found in the current folder instead of the release by @danilogco
 
 ## [0.4.0] - 2026-11-26
 
@@ -54,7 +60,8 @@ All notable changes to this project will be documented in this file. The format 
 - `install.sh` and `uninstall.sh`, which also bind and release Super+Space on Cinnamon by @danilogco
 - Unit tests at 100% coverage, a pre-commit configuration, a CI pipeline and a release pipeline by @danilogco
 
-[Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/dcotecnologia/lupa/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/dcotecnologia/lupa/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/dcotecnologia/lupa/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dcotecnologia/lupa/compare/v0.1.0...v0.2.0

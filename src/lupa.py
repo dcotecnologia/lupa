@@ -20,7 +20,7 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, Gio, GLib, Gtk  # noqa: E402
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 # `git archive` fills this in (export-subst) and the packages are built with the hash
 # written in; in a checkout it is read from git, see build_hash()
 BUILD = "$Format:%h$"

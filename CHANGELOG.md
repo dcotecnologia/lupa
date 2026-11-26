@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+### Changed
+
+- `install.sh` installs the `.deb` where `apt` and `sudo` exist, else the AppImage where FUSE 2 and PyGObject are there, else the script as before; `--method deb|appimage|script` forces one by @danilogco
+- `uninstall.sh` also removes the AppImage and tells how to remove the `.deb` by @danilogco
+
 ## [0.4.0] - 2026-11-26
 
 ### Added

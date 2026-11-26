@@ -15,6 +15,18 @@ fi
 
 rm -f "$PREFIX/lupa"
 echo "Removed $PREFIX/lupa"
+# the AppImage installed by install.sh lives in the data folder
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/lupa"
+if [ -d "$DATA_DIR" ]; then
+  rm -f "$DATA_DIR"/Lupa-*-x86_64.AppImage
+  rmdir "$DATA_DIR" 2>/dev/null || true
+  echo "Removed the AppImage in $DATA_DIR"
+fi
+# the .deb belongs to the system: apt removes it
+if command -v dpkg-query >/dev/null 2>&1 &&
+  [ "$(dpkg-query -W -f='${db:Status-Abbrev}' lupa 2>/dev/null)" = "ii " ]; then
+  echo "The .deb package is still installed; remove it with: sudo apt remove lupa"
+fi
 # the project used to be called spotlight-linux
 if [ -f "$PREFIX/spotlight" ] && grep -q 'SpotlightLauncher' "$PREFIX/spotlight"; then
   rm -f "$PREFIX/spotlight"

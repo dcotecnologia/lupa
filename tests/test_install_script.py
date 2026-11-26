@@ -5,6 +5,7 @@ import http.server
 import io
 import json
 import os
+import shutil
 import subprocess
 import tarfile
 import threading
@@ -75,6 +76,10 @@ class FakeGitHub:
         name = path.removeprefix("/files/")
         for version in self.releases:
             tarball = self.tarball(version)
+            if name == f"lupa_{version}_all.deb":
+                return 200, b"deb of " + version.encode()
+            if name == f"Lupa-{version}-x86_64.AppImage":
+                return 200, b"#!/bin/sh\n# AppImage of " + version.encode() + b"\n"
             if name == f"lupa-{version}.tar.gz":
                 return 200, tarball
             if name == f"SHA256SUMS-{version}":
@@ -93,6 +98,21 @@ class FakeGitHub:
         if data.get("tamper"):
             asset["digest"] = "sha256:" + "0" * 64
         assets = [asset]
+        if data.get("packages"):
+            for name, content in (
+                (f"lupa_{version}_all.deb", b"deb of " + version.encode()),
+                (
+                    f"Lupa-{version}-x86_64.AppImage",
+                    b"#!/bin/sh\n# AppImage of " + version.encode() + b"\n",
+                ),
+            ):
+                assets.append(
+                    {
+                        "name": name,
+                        "browser_download_url": f"{self.url}/files/{name}",
+                        "digest": "sha256:" + hashlib.sha256(content).hexdigest(),
+                    }
+                )
         if data.get("sums"):
             assets.append(
                 {
@@ -127,6 +147,7 @@ def run_install(tmp_path, api, *args, script=INSTALL):
         "HOME": str(tmp_path),
         "LUPA_REPO": "example/lupa",
         "LUPA_API": api,
+        "XDG_DATA_HOME": str(tmp_path / "data"),
     }
     result = subprocess.run(
         ["sh", str(script), "--no-shortcut", "--prefix", str(prefix), *args],
@@ -285,3 +306,89 @@ def test_keeps_a_spotlight_command_that_is_not_ours(tmp_path):
 
     assert result.returncode == 0, result.stderr
     assert other.read_text().startswith("#!/bin/sh")
+
+
+def test_appimage_is_installed_in_the_data_folder_and_linked(
+    tmp_path, github, lone_script
+):
+    server = github({"0.4.0": {"body": "x", "packages": True}})
+
+    result, target = run_install(
+        tmp_path, server.url, "--method", "appimage", script=lone_script
+    )
+
+    assert result.returncode == 0, result.stderr
+    image = tmp_path / "data" / "lupa" / "Lupa-0.4.0-x86_64.AppImage"
+    assert image.read_bytes().startswith(b"#!/bin/sh")
+    assert os.access(image, os.X_OK)
+    assert target.is_symlink()
+    assert target.resolve() == image.resolve()
+
+
+def test_appimage_update_replaces_the_old_one(tmp_path, github, lone_script):
+    server = github({"0.4.0": {"body": "x", "packages": True}})
+    run_install(tmp_path, server.url, "--method", "appimage", script=lone_script)
+    server.releases["0.5.0"] = {"body": "y", "packages": True}
+
+    result, _ = run_install(
+        tmp_path, server.url, "--method", "appimage", script=lone_script
+    )
+    again, _ = run_install(
+        tmp_path, server.url, "--method", "appimage", script=lone_script
+    )
+
+    folder = tmp_path / "data" / "lupa"
+    assert result.returncode == 0, result.stderr
+    assert [p.name for p in folder.iterdir()] == ["Lupa-0.5.0-x86_64.AppImage"]
+    assert "already installed and up to date" in again.stdout
+
+
+def test_script_method_still_works_when_the_release_has_packages(
+    tmp_path, github, lone_script
+):
+    server = github({"0.4.0": {"body": "the script", "packages": True}})
+
+    result, target = run_install(
+        tmp_path, server.url, "--method", "script", script=lone_script
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert not target.is_symlink()
+    assert target.read_text() == "the script"
+
+
+@pytest.mark.parametrize("method", ["deb", "appimage"])
+def test_a_method_the_release_has_no_file_for_fails(
+    tmp_path, github, lone_script, method
+):
+    server = github({"0.1.0": {"body": "x"}})
+
+    result, target = run_install(
+        tmp_path, server.url, "--method", method, script=lone_script
+    )
+
+    assert result.returncode != 0
+    assert "has no file named" in result.stderr
+    assert not target.exists()
+
+
+def test_an_unknown_method_is_rejected(tmp_path):
+    result, _ = run_install(tmp_path, "http://127.0.0.1:1", "--method", "rpm")
+
+    assert result.returncode != 0
+    assert "--method is deb, appimage or script" in result.stderr
+
+
+@pytest.mark.skipif(
+    shutil.which("dpkg") is None or shutil.which("apt-get") is None,
+    reason="needs a Debian family system",
+)
+def test_the_deb_is_the_first_choice_where_apt_exists(tmp_path, github, lone_script):
+    server = github({"0.4.0": {"body": "x", "packages": True}})
+
+    result, target = run_install(tmp_path, server.url, "--dry-run", script=lone_script)
+
+    privileges = os.getuid() == 0 or shutil.which("sudo")
+    assert result.returncode == 0, result.stderr
+    assert ("(deb)" in result.stdout) == bool(privileges)
+    assert not target.exists()

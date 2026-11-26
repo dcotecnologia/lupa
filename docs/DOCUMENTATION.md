@@ -43,11 +43,17 @@ There is no config file; edit the constants at the top of `src/lupa.py` and reru
 
 - **Where the files come from.** Next to `src/lupa.py` (a checkout) it installs that file.
   Anywhere else it reads `releases/latest` (or `releases/tags/vX.Y.Z` with `--version`) from the
-  GitHub API, downloads `lupa-X.Y.Z.tar.gz`, and checks its sha256 against the digest
-  GitHub publishes for the asset, or against the `SHA256SUMS` file of the release. No checksum
-  means no install. Plain `http` is accepted only for localhost, for the tests.
-- **Install and update are the same command.** It copies the script to `~/.local/bin/lupa`
-  (or `--prefix`) and says whether it installed, updated, or found the same file already there.
+  GitHub API and checks the sha256 of the download against the digest GitHub publishes for the
+  asset, or against the `SHA256SUMS` file of the release. No checksum means no install. Plain
+  `http` is accepted only for localhost, for the tests.
+- **Which file.** In order of preference: the `.deb` (`lupa_X.Y.Z_all.deb`) where `dpkg`, `apt-get`
+  and root or `sudo` exist; the AppImage (`Lupa-X.Y.Z-x86_64.AppImage`, kept in
+  `~/.local/share/lupa` and linked as `~/.local/bin/lupa`) where `libfuse.so.2` and PyGObject are
+  there; the script (`lupa-X.Y.Z.tar.gz`, copied to `~/.local/bin/lupa`) otherwise. A release that
+  lacks a file falls to the next choice, and `--method` forces one.
+- **Install and update are the same command.** It says whether it installed, updated, or found the
+  same version already there. After the `.deb` it removes a script of an earlier install from the
+  home folder, which would hide the package in the `PATH`.
 - **Shortcut.** On Cinnamon it registers a custom keybinding named `lupa` through `gsettings`
   (`org.cinnamon.desktop.keybindings`) and removes `<Super>space` from `wm switch-input-source`,
   because Cinnamon binds it to layout switching by default. `--no-shortcut` skips this.

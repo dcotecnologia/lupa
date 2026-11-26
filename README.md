@@ -37,21 +37,27 @@ sudo apt install python3-gi gir1.2-gtk-3.0 plocate
 ## Install
 
 The easiest way is the install script. It finds the latest release, checks it against
-the sha256 that GitHub publishes for it, and installs it into `~/.local/bin`. Run the
-same command again to update; it says when you already have the latest version.
+the sha256 that GitHub publishes for it, and installs it, in this order of preference:
+
+1. the **`.deb`**, where `apt` exists and you can use `sudo` (Debian, Ubuntu, Linux Mint...)
+2. the **AppImage**, where FUSE 2 and PyGObject are available
+3. the **script** of the release, copied to `~/.local/bin`, as in the first versions
+
+Run the same command again to update; it says when you already have the latest version.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dcotecnologia/lupa/main/install.sh | sh
 ```
 
 On Cinnamon it also binds **Super+Space** (and frees it from keyboard-layout switching).
-On other desktops, bind a key to `/usr/bin/python3 ~/.local/bin/lupa` yourself.
+On other desktops, bind a key to the `lupa` command yourself.
 
 To choose a version or look before it acts, save the script and run it with
-`--dry-run`, `--version 0.1.0`, `--prefix DIR` or `--no-shortcut`; `./install.sh --help`
-lists them. A script that you pipe into a shell runs with your rights, so read it
-first if you prefer: [install.sh](install.sh). The sha256 check catches a damaged or
-swapped download; it trusts GitHub and this repository, as any download from them does.
+`--dry-run`, `--version 0.4.0`, `--method deb|appimage|script`, `--prefix DIR` or
+`--no-shortcut`; `./install.sh --help` lists them. A script that you pipe into a shell runs
+with your rights, so read it first if you prefer: [install.sh](install.sh). The sha256
+check catches a damaged or swapped download; it trusts GitHub and this repository, as any
+download from them does.
 
 ### Install a package
 
@@ -63,9 +69,9 @@ an AppImage. They hold the same launcher; Python 3, PyGObject and GTK 3 come fro
 | Debian and Ubuntu | `lupa_<version>_all.deb`         | `sudo apt install ./lupa_<version>_all.deb`, then `lupa`              |
 | Any Linux         | `Lupa-<version>-x86_64.AppImage` | `chmod +x` the file and run it (needs `python3-gi`, `gir1.2-gtk-3.0`) |
 
-The packages do not bind a key: bind Super+Space (or another) to `lupa` in your keyboard settings.
-To remove the `.deb`, run `sudo apt remove lupa`. The install script above keeps working, and is
-the way to get the Super+Space shortcut set up on Cinnamon.
+Installed by hand, they do not bind a key: bind Super+Space (or another) to `lupa` in your keyboard
+settings. To remove the `.deb`, run `sudo apt remove lupa`. The install script does the same
+install for you, and also sets up the Super+Space shortcut on Cinnamon.
 
 ### Install from a checkout
 

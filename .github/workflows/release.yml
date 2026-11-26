@@ -115,13 +115,13 @@ jobs:
           mkdir dist
           git archive --format=tar.gz --prefix="lupa-${VERSION}/" \
             -o "dist/lupa-${VERSION}.tar.gz" HEAD
-          (cd dist && sha256sum "lupa-${VERSION}.tar.gz" > SHA256SUMS)
+          # the packages built by the packages job go in the same release and the same sums
+          cp packages/* dist/
+          (cd dist && sha256sum -- * > SHA256SUMS)
 
       - uses: softprops/action-gh-release@v3
         with:
-          files: |
-            dist/*
-            packages/*
+          files: dist/*
           body_path: ${{ steps.changelog_reader.outputs.changes_file }}
           # v1.3.0-rc1 is a pre-release: GitHub does not make it the latest release
           prerelease: ${{ contains(github.ref_name, '-') }}

@@ -231,3 +231,195 @@ def test_result_keeps_its_fields():
 
     assert (result.title, result.subtitle, result.icon) == ("t", "s", None)
     assert result.action() == 1
+
+
+# -- version and options ------------------------------------------------------
+
+
+def test_version_is_the_one_of_the_project():
+    from tools import package_info
+
+    assert lupa.__version__ == package_info.project_metadata()["version"]
+
+
+def test_version_text_shows_the_metadata(monkeypatch):
+    monkeypatch.setattr(lupa, "BUILD", "abc1234")
+
+    lines = lupa.version_text().splitlines()
+
+    assert lines[0] == f"lupa {lupa.__version__} (build abc1234)"
+    assert "Author: DCO Developers <dev@dcotecnologia.com>" in lines
+    assert "Repository: https://github.com/dcotecnologia/lupa" in lines
+    assert "Website: https://lupa.dcotecnologia.com" in lines
+    assert "License: MIT" in lines
+
+
+def test_build_hash_comes_from_git_when_it_was_not_written_in(monkeypatch):
+    monkeypatch.setattr(lupa, "BUILD", "$Format:%h$")
+    seen = []
+
+    def run(cmd, **kwargs):
+        seen.append(cmd)
+        return SimpleNamespace(returncode=0, stdout="1234abc\n")
+
+    monkeypatch.setattr(lupa.subprocess, "run", run)
+
+    assert lupa.build_hash() == "1234abc"
+    assert seen[0][0] == "git"
+
+
+@pytest.mark.parametrize(
+    "result",
+    [
+        SimpleNamespace(returncode=128, stdout=""),  # not a git checkout
+        SimpleNamespace(returncode=0, stdout="\n"),  # no commit
+    ],
+)
+def test_build_hash_is_unknown_without_a_commit(monkeypatch, result):
+    monkeypatch.setattr(lupa, "BUILD", "$Format:%h$")
+    monkeypatch.setattr(lupa.subprocess, "run", lambda *_a, **_k: result)
+
+    assert lupa.build_hash() == "unknown"
+
+
+def test_build_hash_is_unknown_when_git_is_missing(monkeypatch):
+    def run(*_args, **_kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(lupa, "BUILD", "$Format:%h$")
+    monkeypatch.setattr(lupa.subprocess, "run", run)
+
+    assert lupa.build_hash() == "unknown"
+
+
+def test_build_hash_keeps_the_one_written_in(monkeypatch):
+    monkeypatch.setattr(lupa, "BUILD", "feedbee")
+
+    assert lupa.build_hash() == "feedbee"
+
+
+@pytest.mark.parametrize("option", ["--version", "-V"])
+def test_version_option_prints_and_does_not_start_the_window(
+    monkeypatch, capsys, option
+):
+    started = []
+    monkeypatch.setattr(lupa, "Launcher", lambda: started.append(1))
+
+    status = lupa.main([option])
+
+    assert status == 0
+    assert capsys.readouterr().out.startswith(f"lupa {lupa.__version__} (build ")
+    assert not started
+
+
+@pytest.mark.parametrize("option", ["--help", "-h"])
+def test_help_option_prints_the_usage(monkeypatch, capsys, option):
+    monkeypatch.setattr(lupa, "Launcher", lambda: pytest.fail("must not start"))
+
+    assert lupa.main([option]) == 0
+    assert "Usage: lupa" in capsys.readouterr().out
+
+
+def test_unknown_option_fails_with_the_usage(monkeypatch, capsys):
+    monkeypatch.setattr(lupa, "Launcher", lambda: pytest.fail("must not start"))
+
+    assert lupa.main(["--nope"]) == 2
+    err = capsys.readouterr().err
+    assert "unknown option: --nope" in err
+    assert "Usage: lupa" in err
+
+
+def test_no_option_runs_the_launcher(monkeypatch):
+    class FakeLauncher:
+        def run(self, argv):
+            return 7
+
+    monkeypatch.setattr(lupa, "Launcher", FakeLauncher)
+
+    assert lupa.main([]) == 7
+
+
+# -- update ---------------------------------------------------------------------
+
+
+def fake_run(monkeypatch, download, calls):
+    """Answer curl with `download` and record the other commands."""
+
+    def run(cmd, **kwargs):
+        calls.append((cmd, kwargs))
+        if cmd[0] in ("curl", "wget"):
+            if isinstance(download, Exception):
+                raise download
+            return download
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(lupa.subprocess, "run", run)
+
+
+def test_update_runs_the_install_script_it_downloaded(monkeypatch, capsys):
+    calls = []
+    fake_run(monkeypatch, SimpleNamespace(returncode=0, stdout=b"echo install"), calls)
+
+    status = lupa.main(["update"])
+
+    assert status == 0
+    assert calls[0][0] == ["curl", "-fsSL", lupa.INSTALL_URL]
+    assert calls[1][0] == ["sh", "-s", "--"]
+    assert calls[1][1]["input"] == b"echo install"
+    assert "Updating Lupa" in capsys.readouterr().out
+
+
+def test_update_hands_its_options_to_the_script(monkeypatch):
+    calls = []
+    fake_run(monkeypatch, SimpleNamespace(returncode=0, stdout=b"x"), calls)
+
+    lupa.main(["update", "--version", "0.4.0", "--dry-run"])
+
+    assert calls[1][0] == ["sh", "-s", "--", "--version", "0.4.0", "--dry-run"]
+
+
+def test_update_returns_the_status_of_the_script(monkeypatch):
+    def run(cmd, **kwargs):
+        if cmd[0] == "curl":
+            return SimpleNamespace(returncode=0, stdout=b"x")
+        return SimpleNamespace(returncode=3)
+
+    monkeypatch.setattr(lupa.subprocess, "run", run)
+
+    assert lupa.main(["update"]) == 3
+
+
+def test_update_does_not_run_anything_when_the_download_fails(monkeypatch, capsys):
+    calls = []
+    fake_run(monkeypatch, SimpleNamespace(returncode=22, stdout=b""), calls)
+
+    assert lupa.main(["update"]) == 1
+    assert [c[0][0] for c in calls] == ["curl"]
+    assert "could not download" in capsys.readouterr().err
+
+
+def test_update_falls_back_to_wget_without_curl(monkeypatch):
+    calls = []
+
+    def run(cmd, **kwargs):
+        calls.append(cmd)
+        if cmd[0] == "curl":
+            raise FileNotFoundError("curl")
+        if cmd[0] == "wget":
+            return SimpleNamespace(returncode=0, stdout=b"x")
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(lupa.subprocess, "run", run)
+
+    assert lupa.main(["update"]) == 0
+    assert calls[1] == ["wget", "-qO-", lupa.INSTALL_URL]
+
+
+def test_update_needs_curl_or_wget(monkeypatch, capsys):
+    def run(cmd, **kwargs):
+        raise FileNotFoundError(cmd[0])
+
+    monkeypatch.setattr(lupa.subprocess, "run", run)
+
+    assert lupa.main(["update"]) == 1
+    assert "curl or wget is needed" in capsys.readouterr().err

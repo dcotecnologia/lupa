@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+### Added
+
+- `lupa --version` shows the version, author, repository, website, license and the hash of the build, and does not open the window; `lupa --help` shows the usage by @danilogco
+- `lupa update` runs the install script to install the latest release; options after it go to the script by @danilogco
+
 ### Changed
 
 - `install.sh` installs the `.deb` where `apt` and `sudo` exist, else the AppImage where FUSE 2 and PyGObject are there, else the script as before; `--method deb|appimage|script` forces one by @danilogco

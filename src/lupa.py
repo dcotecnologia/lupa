@@ -11,6 +11,7 @@ import math
 import operator
 import os
 import subprocess
+import sys
 import urllib.parse
 
 import gi
@@ -18,6 +19,32 @@ import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, Gio, GLib, Gtk  # noqa: E402
+
+__version__ = "0.4.0"
+# `git archive` fills this in (export-subst) and the packages are built with the hash
+# written in; in a checkout it is read from git, see build_hash()
+BUILD = "$Format:%h$"
+AUTHOR = "DCO Developers <dev@dcotecnologia.com>"
+REPOSITORY = "https://github.com/dcotecnologia/lupa"
+WEBSITE = "https://lupa.dcotecnologia.com"
+LICENSE = "MIT"
+
+INSTALL_URL = "https://raw.githubusercontent.com/dcotecnologia/lupa/main/install.sh"
+
+HELP = """Usage: lupa [--version] [--help]
+       lupa update [install.sh options]
+
+Lupa is a keyboard launcher. Run it with no options to open the search box; run it
+again to close it. Bind a key to this command to use it from anywhere.
+
+Options:
+  -V, --version   show the version and where it comes from, and exit
+  -h, --help      show this help and exit
+
+Commands:
+  update          install the latest release, as the install script does; options
+                  after it (such as --version 0.4.0 or --dry-run) go to the script
+"""
 
 WEB = "https://www.google.com/search?q="
 MAX_ROWS = 8
@@ -179,6 +206,78 @@ def search_files(query):
 
 def open_uri(uri):
     Gio.AppInfo.launch_default_for_uri(uri, None)
+
+
+def build_hash():
+    """The commit this copy was built from, or "unknown"."""
+    if not BUILD.startswith("$Format"):
+        return BUILD
+    here = os.path.dirname(os.path.abspath(__file__))
+    try:
+        out = subprocess.run(
+            ["git", "-C", here, "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=2,
+        )
+    except (subprocess.SubprocessError, OSError):
+        return "unknown"
+    return (
+        out.stdout.strip() if out.returncode == 0 and out.stdout.strip() else "unknown"
+    )
+
+
+def version_text():
+    """The text of --version: the version and the metadata of the project."""
+    return (
+        f"lupa {__version__} (build {build_hash()})\n"
+        f"Author: {AUTHOR}\n"
+        f"Repository: {REPOSITORY}\n"
+        f"Website: {WEBSITE}\n"
+        f"License: {LICENSE}"
+    )
+
+
+def update(args):
+    """Run the install script of the project, which installs or updates Lupa.
+
+    It is `curl -fsSL <install.sh> | sh`, with the download checked
+    first: in a pipe, a failed curl would leave sh running an empty
+    script and report success.
+    """
+    for command in (["curl", "-fsSL"], ["wget", "-qO-"]):
+        try:
+            script = subprocess.run(
+                [*command, INSTALL_URL], capture_output=True, check=False
+            )
+        except OSError:
+            continue  # this downloader is not installed
+        if script.returncode != 0:
+            print(f"lupa: could not download {INSTALL_URL}", file=sys.stderr)
+            return 1
+        print(f"Updating Lupa (running {INSTALL_URL})...")
+        return subprocess.run(
+            ["sh", "-s", "--", *args], input=script.stdout, check=False
+        ).returncode
+    print("lupa: curl or wget is needed to update", file=sys.stderr)
+    return 1
+
+
+def main(argv):
+    """Print what the options ask for, or run the launcher; return the exit
+    status."""
+    if argv in (["--version"], ["-V"]):
+        print(version_text())
+        return 0
+    if argv in (["--help"], ["-h"]):
+        print(HELP, end="")
+        return 0
+    if argv[:1] == ["update"]:
+        return update(argv[1:])
+    if argv:
+        print(f"lupa: unknown option: {argv[0]}\n\n{HELP}", end="", file=sys.stderr)
+        return 2
+    return Launcher().run([])
 
 
 class Launcher(Gtk.Application):
@@ -375,4 +474,4 @@ class Launcher(Gtk.Application):
 
 
 if __name__ == "__main__":
-    raise SystemExit(Launcher().run([]))
+    raise SystemExit(main(sys.argv[1:]))

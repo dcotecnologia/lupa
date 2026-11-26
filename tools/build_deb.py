@@ -92,7 +92,7 @@ def build(output_dir: Path = DIST, staging: Path = STAGING) -> Path:
 
     binary = package / "usr" / "bin" / "lupa"
     binary.parent.mkdir(parents=True)
-    shutil.copyfile(package_info.SCRIPT, binary)
+    binary.write_text(package_info.script_text(), encoding="utf-8")
     write(package / "usr/share/applications/lupa.desktop", package_info.DESKTOP_ENTRY)
     write(package / "usr/share/doc/lupa/copyright", copyright_text())
     changelog = package / "usr/share/doc/lupa/changelog.gz"

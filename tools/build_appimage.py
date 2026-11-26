@@ -75,7 +75,7 @@ def build_appdir(appdir: Path = APPDIR) -> Path:
         shutil.rmtree(appdir)
     binary = appdir / "usr" / "bin" / "lupa"
     binary.parent.mkdir(parents=True)
-    shutil.copyfile(package_info.SCRIPT, binary)
+    binary.write_text(package_info.script_text(), encoding="utf-8")
     binary.chmod(0o755)
     package_info.render_icons(appdir / "usr" / "share")
     icon = appdir / "usr/share/icons/hicolor/512x512/apps/lupa.png"

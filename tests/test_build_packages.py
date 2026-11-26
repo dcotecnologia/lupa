@@ -3,6 +3,7 @@ run)."""
 
 import shutil
 import subprocess
+from types import SimpleNamespace
 
 import pytest
 
@@ -105,9 +106,7 @@ def test_md5sums_skips_the_control_files(tmp_path):
 def test_appdir_has_the_app_run_the_menu_entry_and_the_icons(tmp_path):
     appdir = build_appimage.build_appdir(tmp_path / "Lupa.AppDir")
 
-    assert (appdir / "usr" / "bin" / "lupa").read_bytes() == (
-        package_info.SCRIPT.read_bytes()
-    )
+    assert (appdir / "usr" / "bin" / "lupa").read_text() == (package_info.script_text())
     assert (appdir / "lupa.png").is_file()
     assert (appdir / ".DirIcon").is_file()
     assert "Exec=lupa" in (appdir / "lupa.desktop").read_text()
@@ -130,3 +129,29 @@ def test_appdir_replaces_an_old_one(tmp_path):
 def test_appimage_is_named_after_the_version_and_updates_from_github():
     assert "Lupa-*-x86_64.AppImage.zsync" in build_appimage.UPDATE_INFORMATION
     assert build_appimage.TOOL_URL.endswith("/appimagetool-x86_64.AppImage")
+
+
+def test_script_text_writes_the_commit_in_as_the_build(monkeypatch):
+    monkeypatch.setattr(
+        package_info.subprocess,
+        "run",
+        lambda *_a, **_k: SimpleNamespace(returncode=0, stdout="9f8e7d6\n"),
+    )
+
+    text = package_info.script_text()
+
+    assert 'BUILD = "9f8e7d6"' in text
+    assert 'BUILD = "$Format:%h$"' not in text
+
+
+@pytest.mark.parametrize(
+    "result",
+    [
+        SimpleNamespace(returncode=128, stdout=""),
+        SimpleNamespace(returncode=0, stdout=""),
+    ],
+)
+def test_script_text_is_left_alone_without_a_commit(monkeypatch, result):
+    monkeypatch.setattr(package_info.subprocess, "run", lambda *_a, **_k: result)
+
+    assert package_info.script_text() == package_info.SCRIPT.read_text()

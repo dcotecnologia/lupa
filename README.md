@@ -59,6 +59,18 @@ with your rights, so read it first if you prefer: [install.sh](install.sh). The 
 check catches a damaged or swapped download; it trusts GitHub and this repository, as any
 download from them does.
 
+### Update, and check the version
+
+```bash
+lupa update      # the same as running the install command above
+lupa --version   # version, author, repository, website, license and build hash
+```
+
+`lupa update` downloads the install script, checks that the download worked, and runs it, so it
+picks the `.deb`, the AppImage or the script as described above. Options after `update` go to
+the script: `lupa update --version 0.4.0`, `lupa update --dry-run`. `lupa --version` only prints
+and does not open the window.
+
 ### Install a package
 
 Every [release](https://github.com/dcotecnologia/lupa/releases/latest) also has a `.deb` and

@@ -2,6 +2,7 @@
 icons)."""
 
 import re
+import subprocess
 import tomllib
 from pathlib import Path
 
@@ -38,6 +39,22 @@ def debian_version(version: str) -> str:
     1.3.0rc1 would come after it.
     """
     return re.sub(r"(\d)(a|b|rc)(\d+)$", r"\1~\2\3", version)
+
+
+def script_text() -> str:
+    """The launcher with the hash of the current commit written in as its
+    build."""
+    text = SCRIPT.read_text(encoding="utf-8")
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    commit = result.stdout.strip()
+    if result.returncode != 0 or not commit:
+        return text
+    return text.replace('BUILD = "$Format:%h$"', f'BUILD = "{commit}"', 1)
 
 
 def render_icons(share: Path) -> None:

@@ -63,6 +63,20 @@ There is no config file; edit the constants at the top of `src/lupa.py` and reru
 
 `tests/test_install_script.py` runs the script against a fake GitHub API on localhost.
 
+## Command line
+
+| Command | What it does |
+| ------- | ------------ |
+| `lupa` | Opens the search box, or closes it if it is open |
+| `lupa --version` | Prints the version, author, repository, website, license and build hash, and exits |
+| `lupa --help` | Prints the usage |
+| `lupa update [options]` | Downloads `install.sh` and runs it, so it installs the latest release |
+
+The build hash is the commit the copy was made from: `git archive` writes it into the script
+(`export-subst`), the `.deb` and the AppImage are built with it, and a checkout reads it from git.
+The version is `__version__` in `src/lupa.py` and must equal the one in `pyproject.toml`; a test
+checks it, so change both when you release.
+
 ## Troubleshooting
 
 | Symptom | Fix |

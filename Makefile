@@ -2,7 +2,7 @@
 
 UV ?= uv
 
-.PHONY: help setup run install uninstall screenshot test lint format clean
+.PHONY: help setup run install uninstall screenshot deb appimage test lint format clean
 
 help: ## List the available commands
 	@awk 'BEGIN { FS = ":.*##" } /^[a-zA-Z0-9_-]+:.*##/ { printf "  %-12s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -24,6 +24,12 @@ uninstall: ## Remove the command and the shortcut
 screenshot: ## Regenerate the screenshots of the README (needs a display)
 	/usr/bin/python3 tools/screenshot.py
 
+deb: ## Package the launcher as a .deb in dist/ (Debian/Ubuntu, needs dpkg-deb)
+	$(UV) run --extra dev python tools/build_deb.py
+
+appimage: ## Package the launcher as an AppImage in dist/ (downloads a pinned appimagetool)
+	$(UV) run --extra dev python tools/build_appimage.py
+
 test: ## Run the tests, at 100% coverage
 	$(UV) run --extra dev pytest -q
 
@@ -35,4 +41,4 @@ format: ## Fix lint issues and format the code with ruff
 	$(UV) run --extra dev ruff format .
 
 clean: ## Remove the test and lint caches
-	rm -rf .pytest_cache .ruff_cache .coverage coverage.xml
+	rm -rf .pytest_cache .ruff_cache .coverage coverage.xml build dist

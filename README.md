@@ -53,6 +53,20 @@ lists them. A script that you pipe into a shell runs with your rights, so read i
 first if you prefer: [install.sh](install.sh). The sha256 check catches a damaged or
 swapped download; it trusts GitHub and this repository, as any download from them does.
 
+### Install a package
+
+Every [release](https://github.com/dcotecnologia/lupa/releases/latest) also has a `.deb` and
+an AppImage. They hold the same launcher; Python 3, PyGObject and GTK 3 come from your system.
+
+| System            | File                             | How to install                                                        |
+| ----------------- | -------------------------------- | --------------------------------------------------------------------- |
+| Debian and Ubuntu | `lupa_<version>_all.deb`         | `sudo apt install ./lupa_<version>_all.deb`, then `lupa`              |
+| Any Linux         | `Lupa-<version>-x86_64.AppImage` | `chmod +x` the file and run it (needs `python3-gi`, `gir1.2-gtk-3.0`) |
+
+The packages do not bind a key: bind Super+Space (or another) to `lupa` in your keyboard settings.
+To remove the `.deb`, run `sudo apt remove lupa`. The install script above keeps working, and is
+the way to get the Super+Space shortcut set up on Cinnamon.
+
 ### Install from a checkout
 
 ```bash

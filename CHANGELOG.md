@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+### Added
+
+- Each release has a `.deb` (`lupa_X.Y.Z_all.deb`) and an AppImage (`Lupa-X.Y.Z-x86_64.AppImage`), built by `make deb` and `make appimage`, besides the install script by @danilogco
+
 ## [0.3.0] - 2026-11-26
 
 ### Added

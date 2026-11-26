@@ -33,14 +33,58 @@ jobs:
       - name: Run tests
         run: uv run pytest -q
 
+  packages:
+    name: Packages (.deb and AppImage)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install zsync
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends zsync
+
+      - uses: astral-sh/setup-uv@v10.4.0
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --extra dev --frozen
+
+      - name: Build the .deb
+        run: uv run python tools/build_deb.py
+
+      - name: Build the AppImage
+        run: uv run python tools/build_appimage.py
+
+      - name: Check the packages
+        run: |
+          dpkg-deb --info dist/lupa_*_all.deb
+          dpkg-deb --contents dist/lupa_*_all.deb
+          test -s dist/Lupa-*-x86_64.AppImage
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          path: |
+            dist/*.deb
+            dist/*.AppImage
+            dist/*.AppImage.zsync
+          if-no-files-found: error
+
   publish:
     name: Publish GitHub release
-    needs: test
+    needs: [test, packages]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: packages
 
       # the version of the release is the one of the tag, written as the changelog does
       - name: Get the version of the release
@@ -75,7 +119,9 @@ jobs:
 
       - uses: softprops/action-gh-release@v3
         with:
-          files: dist/*
+          files: |
+            dist/*
+            packages/*
           body_path: ${{ steps.changelog_reader.outputs.changes_file }}
           # v1.3.0-rc1 is a pre-release: GitHub does not make it the latest release
           prerelease: ${{ contains(github.ref_name, '-') }}

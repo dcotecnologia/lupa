@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           enable-cache: true
 
@@ -54,7 +54,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends python3-gi gir1.2-gtk-3.0
 
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           enable-cache: true
 

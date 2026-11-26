@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-26
+
 ### Added
 
 - Each release has a `.deb` (`lupa_X.Y.Z_all.deb`) and an AppImage (`Lupa-X.Y.Z-x86_64.AppImage`), built by `make deb` and `make appimage`, besides the install script by @danilogco
@@ -42,7 +44,8 @@ All notable changes to this project will be documented in this file. The format 
 - `install.sh` and `uninstall.sh`, which also bind and release Super+Space on Cinnamon by @danilogco
 - Unit tests at 100% coverage, a pre-commit configuration, a CI pipeline and a release pipeline by @danilogco
 
-[Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/dcotecnologia/lupa/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/dcotecnologia/lupa/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/dcotecnologia/lupa/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dcotecnologia/lupa/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dcotecnologia/lupa/releases/tag/v0.1.0

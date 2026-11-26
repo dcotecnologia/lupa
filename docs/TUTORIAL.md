@@ -1,6 +1,6 @@
 # Tutorial
 
-A five-minute tour. Install first (see the [README](../README.md)).
+A five-minute tour. Install first (see the [Install section of the README](https://github.com/dcotecnologia/spotlight-linux#install)).
 
 ## 1. Open it
 

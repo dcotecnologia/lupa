@@ -9,6 +9,8 @@
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen)](https://github.com/pre-commit/pre-commit)
 
+**Website:** <https://dcotecnologia.github.io/spotlight-linux/>
+
 A small macOS-Spotlight-style launcher for Linux desktops, written in Python and GTK3.
 Press a shortcut, type, hit Enter.
 

@@ -1,10 +1,11 @@
 #!/usr/bin/python3
-"""Spotlight-like launcher for Linux (GTK3). Run again to toggle the window.
+"""Spotlight-like launcher for Linux (GTK3).
 
-Search: applications, calculator (type `2*(3+4)`), files via plocate (type
-at least 3 chars), and a web-search fallback. Enter opens, Esc closes,
-Up/Down move, Ctrl+1..9 pick a row.
+Run again to toggle the window. Search: applications, calculator (type
+`2*(3+4)`), files via plocate (type at least 3 chars), and a web-search
+fallback. Enter opens, Esc closes, Up/Down move, Ctrl+1..9 pick a row.
 """
+
 import ast
 import math
 import operator
@@ -34,14 +35,21 @@ row:selected { background: rgba(70,130,255,0.85); color: #fff; }
 """
 
 _OPS = {
-    ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
-    ast.Div: operator.truediv, ast.Pow: operator.pow, ast.Mod: operator.mod,
-    ast.FloorDiv: operator.floordiv, ast.USub: operator.neg,
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.Pow: operator.pow,
+    ast.Mod: operator.mod,
+    ast.FloorDiv: operator.floordiv,
+    ast.USub: operator.neg,
     ast.UAdd: operator.pos,
 }
 _NAMES = {"pi": math.pi, "e": math.e}
-_FUNCS = {n: getattr(math, n) for n in
-          ("sqrt", "sin", "cos", "tan", "log", "log10", "exp", "floor", "ceil")}
+_FUNCS = {
+    n: getattr(math, n)
+    for n in ("sqrt", "sin", "cos", "tan", "log", "log10", "exp", "floor", "ceil")
+}
 
 
 def _eval(node):
@@ -56,8 +64,12 @@ def _eval(node):
         return _OPS[type(node.op)](_eval(node.operand))
     if isinstance(node, ast.Name) and node.id in _NAMES:
         return _NAMES[node.id]
-    if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
-            and node.func.id in _FUNCS and len(node.args) == 1):
+    if (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id in _FUNCS
+        and len(node.args) == 1
+    ):
         return _FUNCS[node.func.id](_eval(node.args[0]))
     raise ValueError("unsupported")
 
@@ -67,10 +79,17 @@ def calc(text):
     if not any(c.isdigit() for c in text):
         return None
     try:
-        value = _eval(ast.parse(text.replace("^", "**").replace(",", "."),
-                                mode="eval").body)
-    except (ValueError, SyntaxError, ZeroDivisionError, OverflowError,
-            TypeError, RecursionError):
+        value = _eval(
+            ast.parse(text.replace("^", "**").replace(",", "."), mode="eval").body
+        )
+    except (
+        ValueError,
+        SyntaxError,
+        ZeroDivisionError,
+        OverflowError,
+        TypeError,
+        RecursionError,
+    ):
         return None
     if isinstance(value, float):
         value = round(value, 10)
@@ -82,7 +101,11 @@ def calc(text):
 class Result:
     def __init__(self, title, subtitle, icon, action):
         self.title, self.subtitle, self.icon, self.action = (
-            title, subtitle, icon, action)
+            title,
+            subtitle,
+            icon,
+            action,
+        )
 
 
 def search_apps(query):
@@ -97,16 +120,24 @@ def search_apps(query):
             score = 0
         elif q in low:
             score = 1
-        elif q in (app.get_generic_name() or "").lower() or \
-                q in (app.get_keywords() and " ".join(app.get_keywords()) or "").lower():
+        elif (
+            q in (app.get_generic_name() or "").lower()
+            or q in (app.get_keywords() and " ".join(app.get_keywords()) or "").lower()
+        ):
             score = 2
         else:
             continue
         scored.append((score, low, app))
     scored.sort(key=lambda t: t[:2])
-    return [Result(a.get_display_name(), a.get_description() or "Application",
-                   a.get_icon(), lambda a=a: a.launch([], None))
-            for _, _, a in scored[:MAX_ROWS]]
+    return [
+        Result(
+            a.get_display_name(),
+            a.get_description() or "Application",
+            a.get_icon(),
+            lambda a=a: a.launch([], None),
+        )
+        for _, _, a in scored[:MAX_ROWS]
+    ]
 
 
 def search_files(query):
@@ -116,19 +147,31 @@ def search_files(query):
     try:
         out = subprocess.run(
             ["plocate", "-i", "-l", "40", "-b", "--", query],
-            capture_output=True, text=True, timeout=1.5).stdout
+            capture_output=True,
+            text=True,
+            timeout=1.5,
+        ).stdout
     except (subprocess.SubprocessError, OSError):
         return []
-    paths = [p for p in out.splitlines()
-             if p.startswith(home) and "/." not in p[len(home):]]
+    paths = [
+        p for p in out.splitlines() if p.startswith(home) and "/." not in p[len(home) :]
+    ]
     results = []
     for p in paths[:5]:
-        gfile = Gio.File.new_for_path(p)
+        uri = Gio.File.new_for_path(p).get_uri()
         icon = Gio.content_type_get_icon(
-            "inode/directory" if os.path.isdir(p)
-            else Gio.content_type_guess(p, None)[0])
-        results.append(Result(os.path.basename(p), p.replace(home, "~", 1),
-                              icon, lambda u=gfile.get_uri(): open_uri(u)))
+            "inode/directory"
+            if os.path.isdir(p)
+            else Gio.content_type_guess(p, None)[0]
+        )
+        results.append(
+            Result(
+                os.path.basename(p),
+                p.replace(home, "~", 1),
+                icon,
+                lambda uri=uri: open_uri(uri),
+            )
+        )
     return results
 
 
@@ -146,8 +189,8 @@ class Launcher(Gtk.Application):
         prov = Gtk.CssProvider()
         prov.load_from_data(CSS)
         Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(), prov,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            Gdk.Screen.get_default(), prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
     def do_activate(self):
         if self.win is None:
@@ -185,7 +228,7 @@ class Launcher(Gtk.Application):
         box.pack_start(self.revealer, False, False, 0)
         win.add(box)
 
-        win.connect("focus-out-event", lambda *_: win.hide())
+        self.focus_handler = win.connect("focus-out-event", lambda *_: win.hide())
         win.connect("delete-event", lambda w, _e: w.hide() or True)
         win.show_all()
         win.hide()
@@ -197,8 +240,10 @@ class Launcher(Gtk.Application):
         self.clear()
         self.win.show_all()
         self.revealer.set_reveal_child(False)
-        screen = Gdk.Display.get_default().get_primary_monitor() or \
-            Gdk.Display.get_default().get_monitor(0)
+        screen = (
+            Gdk.Display.get_default().get_primary_monitor()
+            or Gdk.Display.get_default().get_monitor(0)
+        )
         geo = screen.get_geometry()
         self.win.move(geo.x + (geo.width - 640) // 2, geo.y + geo.height // 4)
         self.win.present_with_time(Gtk.get_current_event_time())
@@ -218,8 +263,7 @@ class Launcher(Gtk.Application):
         if key in (Gdk.KEY_Down, Gdk.KEY_Up):
             self.move(1 if key == Gdk.KEY_Down else -1)
             return True
-        if ev.state & Gdk.ModifierType.CONTROL_MASK and \
-                Gdk.KEY_1 <= key <= Gdk.KEY_9:
+        if ev.state & Gdk.ModifierType.CONTROL_MASK and Gdk.KEY_1 <= key <= Gdk.KEY_9:
             self.select(key - Gdk.KEY_1)
             self.run_selected()
             return True
@@ -252,14 +296,24 @@ class Launcher(Gtk.Application):
         results = []
         value = calc(text)
         if value is not None:
-            results.append(Result(
-                f"= {value}", "Press Enter to copy", None,
-                lambda v=value: self.copy(v)))
+            results.append(
+                Result(
+                    f"= {value}",
+                    "Press Enter to copy",
+                    None,
+                    lambda v=value: self.copy(v),
+                )
+            )
         results += search_apps(text)
         results += search_files(text)
-        results.append(Result(
-            f"Search the web for “{text}”", "Browser", None,
-            lambda t=text: open_uri(WEB + urllib.parse.quote_plus(t))))
+        results.append(
+            Result(
+                f"Search the web for “{text}”",
+                "Browser",
+                None,
+                lambda t=text: open_uri(WEB + urllib.parse.quote_plus(t)),
+            )
+        )
         self.results = results[: MAX_ROWS + 6]
         for i, r in enumerate(self.results):
             self.list.add(self.make_row(r, i))
@@ -272,7 +326,8 @@ class Launcher(Gtk.Application):
     def make_row(r, i):
         hb = Gtk.Box(spacing=10)
         img = Gtk.Image.new_from_gicon(
-            r.icon or Gio.ThemedIcon.new("system-search"), Gtk.IconSize.DND)
+            r.icon or Gio.ThemedIcon.new("system-search"), Gtk.IconSize.DND
+        )
         img.set_pixel_size(32)
         hb.pack_start(img, False, False, 0)
         vb = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)

@@ -1,0 +1,81 @@
+name: Release
+
+# Push a tag like v0.2.0 to publish a GitHub release. The tag must match the
+# version in pyproject.toml and the changelog must have a section for it.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install GTK bindings
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-gi gir1.2-gtk-3.0
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv venv --system-site-packages --python /usr/bin/python3
+          uv sync --extra dev --frozen
+
+      - name: Run tests
+        run: uv run pytest -q
+
+  publish:
+    name: Publish GitHub release
+    needs: test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      # the version of the release is the one of the tag, written as the changelog does
+      - name: Get the version of the release
+        id: release_vars
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          declared=$(python3 -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          if [ "$version" != "$declared" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match pyproject.toml ($declared)" >&2
+            exit 1
+          fi
+          echo "project_version=$version" >> "$GITHUB_OUTPUT"
+
+      # the release says what the changelog says about this version, and the
+      # action validates the changelog first (the last ten versions)
+      - name: Read the history of the version
+        id: changelog_reader
+        uses: dcotecnologia/keepmeachangelog-action@v1
+        with:
+          validation_depth: 10
+          version: ${{ steps.release_vars.outputs.project_version }}
+          path: ./CHANGELOG.md
+
+      - name: Pack the sources
+        env:
+          VERSION: ${{ steps.release_vars.outputs.project_version }}
+        run: |
+          mkdir dist
+          git archive --format=tar.gz --prefix="spotlight-linux-${VERSION}/" \
+            -o "dist/spotlight-linux-${VERSION}.tar.gz" HEAD
+          (cd dist && sha256sum "spotlight-linux-${VERSION}.tar.gz" > SHA256SUMS)
+
+      - uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
+          body_path: ${{ steps.changelog_reader.outputs.changes_file }}
+          # v1.3.0-rc1 is a pre-release: GitHub does not make it the latest release
+          prerelease: ${{ contains(github.ref_name, '-') }}

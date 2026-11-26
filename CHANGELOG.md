@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+### Added
+
+- A dim placeholder, "Search apps, files or math", while the search box is empty, in a tone darker than the text you type by @danilogco
+
 ## [0.2.0] - 2026-11-26
 
 ### Changed

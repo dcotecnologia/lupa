@@ -21,6 +21,7 @@ from gi.repository import Gdk, Gio, GLib, Gtk  # noqa: E402
 
 WEB = "https://www.google.com/search?q="
 MAX_ROWS = 8
+PLACEHOLDER = "Search apps, files or math"
 
 CSS = b"""
 window { background: transparent; }
@@ -32,6 +33,7 @@ list, row { background: transparent; color: #eee; }
 row { border-radius: 8px; padding: 6px 8px; }
 row:selected { background: rgba(70,130,255,0.85); color: #fff; }
 .sub { font-size: 11px; opacity: 0.65; }
+.hint { font-size: 22px; color: rgba(255,255,255,0.4); }
 """
 
 _OPS = {
@@ -216,11 +218,25 @@ class Launcher(Gtk.Application):
 
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.get_style_context().add_class("box")
-        self.entry = Gtk.Entry(placeholder_text="Search")
+        # GTK 3 only shows the placeholder of an entry that is not focused, and this
+        # one always has the focus, so a dim label over the entry plays that part
+        self.entry = Gtk.Entry()
+        self.hint = Gtk.Label(
+            label=PLACEHOLDER,
+            xalign=0,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+            margin_start=10,
+        )
+        self.hint.get_style_context().add_class("hint")
+        field = Gtk.Overlay()
+        field.add(self.entry)
+        field.add_overlay(self.hint)
+        field.set_overlay_pass_through(self.hint, True)
         self.entry.connect("changed", self.on_changed)
         self.entry.connect("key-press-event", self.on_key)
         self.entry.connect("activate", lambda *_: self.run_selected())
-        box.pack_start(self.entry, False, False, 0)
+        box.pack_start(field, False, False, 0)
         self.list = Gtk.ListBox()
         self.list.connect("row-activated", lambda _l, _r: self.run_selected())
         self.revealer = Gtk.Revealer(reveal_child=False)
@@ -283,6 +299,7 @@ class Launcher(Gtk.Application):
 
     # -- search -------------------------------------------------------
     def on_changed(self, entry):
+        self.hint.set_visible(not entry.get_text())
         if self.timer:
             GLib.source_remove(self.timer)
         self.timer = GLib.timeout_add(80, self.refresh)  # debounce typing

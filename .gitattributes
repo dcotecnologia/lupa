@@ -1,0 +1,3 @@
+# Keep the repository in LF so no tool or editor on Windows shows a whole
+# file as changed when only its line endings differ
+* text=auto eol=lf
